@@ -4,33 +4,61 @@ using UnityEngine;
 
 public class TestMyVelocity : MonoBehaviour
 {
-    [SerializeField] private MyVector position_;
     private MyVector displaicement;
+    [SerializeField] private MyVector position;    
     [SerializeField] private MyVector velocity;
+    [SerializeField] private MyVector acceleration;
+
+    int state;
+    [SerializeField] float accelerationMagnitude = 9.8f;
+    MyVector[] directions = new MyVector[4]
+    {
+        new MyVector(0,1),
+        new MyVector(1,0),
+        new MyVector(0,-1),
+        new MyVector(-1,0)
+    };
+    
 
     void Start()
     {
-        position_ = new MyVector(transform.position.x, transform.position.y);
+        position = new MyVector(transform.position.x, transform.position.y);
+    }
+
+    private void FixedUpdate()
+    {
+        Move();
     }
 
     void Update()
     {
-        Move();
+        if (Input.GetButtonDown("Jump"))
+        {
+            state = (state + 1) % 4;
+            velocity = velocity * 0;
+            acceleration = directions[state] * accelerationMagnitude;
+        }
     }
     void Move()
     {
-        displaicement = velocity * Time.deltaTime;  
-        position_ += displaicement;
+        /*print("acceleration = " + acceleration);
+        print("velocity = " + velocity);
+        print("position = " + position);*/
 
-        if (Mathf.Abs(position_.x) >= 5)
+        velocity += acceleration * Time.fixedDeltaTime;
+        position += velocity * Time.fixedDeltaTime;
+
+        if (Mathf.Abs(position.x) >= 5)
         {
-           velocity.x *= -1;
+            position.x = Mathf.Sign(position.x) * 5;
+            velocity.x *= -1;
         }
-        if (Mathf.Abs(position_.y) >= 5)
+        if (Mathf.Abs(position.y) >= 5)
         {
+            position.y = Mathf.Sign(position.y) * 5;
             velocity.y *= -1;
         }
 
-        transform.position = position_;
+        transform.position = position;
     }
 }
