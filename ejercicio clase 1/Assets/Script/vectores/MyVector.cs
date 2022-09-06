@@ -91,4 +91,32 @@ public struct MyVector
     {
         return $"(" + x +", " + y + ")";
     }
+    public float magnitude => Mathf.Sqrt(x * x + y * y);
+    //public MyVector normalized => new MyVector(x / magnitude, y/magnitude); 
+    public MyVector normalized
+    {
+        get
+        {
+            float distance = magnitude;
+            if (distance < 0.0001f)
+            {
+                return new MyVector(0, 0);
+            }
+            return new MyVector(x / distance, y / distance);
+        }
+    }
+    public void Normalize()
+    {
+        float magnitudeCache = magnitude;
+        if (magnitudeCache < 0.001)
+        {
+            x = 0;
+            y = 0;
+        }
+        else
+        {
+            x = x / magnitudeCache;
+            y = y / magnitudeCache;
+        }
+    }
 }
